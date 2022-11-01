@@ -1,6 +1,8 @@
 #include <array>
 #include <span>
 
+namespace aes {
+
 using Byte = uint8_t;                       // unsigned 8 bit integer
 using Bytes4 = std::array<Byte, 4>;         // an array of 4 bytes
 using Bytes16 = std::array<Byte, 16>;       // an array of 16 bytes
@@ -22,3 +24,5 @@ Bytes16 mix_columns(const Bytes16 &input, bool inverse);
 // Accept an input array of bytes key (k0,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15) and
 // produce W the 176 byte array to be used as keys for initial round and 10 rounds of AES.
 Bytes176 key_expansion(const Bytes16 &input);
+
+}

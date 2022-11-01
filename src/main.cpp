@@ -3,6 +3,8 @@
 
 #include "aes/aes.h"
 
+using namespace aes;
+
 bool bytes16_eq(const Bytes16 &first, const Bytes16 &second)
 {
     for (int i = 0; i < 16; i++)
