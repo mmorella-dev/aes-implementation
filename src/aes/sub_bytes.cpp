@@ -8,7 +8,7 @@ namespace aes
     Bytes16 sub_bytes(const Bytes16 &input, bool inverse)
     {
         Bytes16 result;
-        std::transform(input.begin(), input.end(), result.begin(), [=](Byte b)
+        std::transform(input.begin(), input.end(), result.begin(), [=](uint8_t b)
                        {
         if (!inverse)
             return SBOX[b];

@@ -5,7 +5,7 @@
 
 namespace aes
 {
-    Byte gf2n_multiply(int a, int b)
+    uint8_t gf2n_multiply(int a, int b)
     {
         const int overflow = 0x100, modulus = 0x11B; // AES GF(2^8) representation
         int sum = 0;
@@ -18,10 +18,10 @@ namespace aes
             if (a & overflow)
                 a = a ^ modulus; // reduce a modulo the AES polynomial
         }
-        return (Byte)sum;
+        return (uint8_t)sum;
     }
 
-    using Bytes4 = std::array<Byte, 4>;
+    using Bytes4 = std::array<uint8_t, 4>;
 
     inline Bytes4 dot_product(const Bytes4 &v1, const Bytes4 &v2)
     {
@@ -34,7 +34,7 @@ namespace aes
     /// @param s A 4x4 matrix of bytes
     /// @param j The index of of the column to get
     /// @return The jth column
-    inline Bytes4 get_col(const Bytes16 &s, Byte j)
+    inline Bytes4 get_col(const Bytes16 &s, uint8_t j)
     {
         return {s[j], s[4 + j], s[8 + j], s[12 + j]};
     }
@@ -61,7 +61,7 @@ namespace aes
             {
                 Bytes4 product = dot_product(
                     (!inverse ? mix_matrix : mix_inv_matrix)[i], col);
-                Byte ac = std::reduce(product.cbegin(), product.cend(), '\0', std::bit_xor{});
+                uint8_t ac = std::reduce(product.cbegin(), product.cend(), '\0', std::bit_xor{});
                 output[i * 4 + j] = ac;
             }
         }

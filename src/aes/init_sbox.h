@@ -1,11 +1,11 @@
 using std::array;
-using Byte = uint8_t;
+using uint8_t = uint8_t;
 
 #define ROTL8(x, shift) ((uint8_t)((x) << (shift)) | ((x) >> (8 - (shift))))
-constexpr array<Byte, 256> initialize_aes_sbox(bool inverse)
+constexpr array<uint8_t, 256> initialize_aes_sbox(bool inverse)
 {
-    array<Byte, 256> sbox = {};
-    Byte p = 1, q = 1;
+    array<uint8_t, 256> sbox = {};
+    uint8_t p = 1, q = 1;
 
     // loop invariant: p * q == 1 in the Galois field
     do
@@ -33,5 +33,5 @@ constexpr array<Byte, 256> initialize_aes_sbox(bool inverse)
     return sbox;
 }
 
-constexpr array<Byte, 256> SBOX = initialize_aes_sbox(false);
-constexpr array<Byte, 256> SBOX_INVERSE = initialize_aes_sbox(true);
+constexpr array<uint8_t, 256> SBOX = initialize_aes_sbox(false);
+constexpr array<uint8_t, 256> SBOX_INVERSE = initialize_aes_sbox(true);

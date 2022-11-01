@@ -4,7 +4,7 @@
 
 namespace aes
 {
-    using Word = std::array<Byte, 4>;
+    using Word = std::array<uint8_t, 4>;
 
     Bytes176 key_expansion(const Bytes16 &key)
     {
