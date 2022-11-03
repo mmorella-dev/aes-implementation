@@ -1,68 +1,33 @@
 #include "aes.h"
+#include "galois_lookup.h"
 
 #include <algorithm>
 #include <numeric>
 
 namespace aes
 {
-    uint8_t gf2n_multiply(int a, int b)
-    {
-        const int overflow = 0x100, modulus = 0x11B; // AES GF(2^8) representation
-        int sum = 0;
-        while (b > 0)
-        {
-            if (b & 1)
-                sum = sum ^ a; // if last bit of b is 1, add a to the sum
-            b = b >> 1;        // divide b by 2, discarding the last bit
-            a = a << 1;        // multiply a by 2
-            if (a & overflow)
-                a = a ^ modulus; // reduce a modulo the AES polynomial
-        }
-        return (uint8_t)sum;
-    }
-
-    using Bytes4 = std::array<uint8_t, 4>;
-
-    inline Bytes4 dot_product(const Bytes4 &v1, const Bytes4 &v2)
-    {
-        Bytes4 product;
-        std::transform(v1.cbegin(), v1.cend(), v2.cbegin(), product.begin(), gf2n_multiply);
-        return product;
-    }
-
-    /// Gets a column from a matrix of bytes.
-    /// @param s A 4x4 matrix of bytes
-    /// @param j The index of of the column to get
-    /// @return The jth column
-    inline Bytes4 get_col(const Bytes16 &s, uint8_t j)
-    {
-        return {s[j], s[4 + j], s[8 + j], s[12 + j]};
-    }
-
     Bytes16 mix_columns(const Bytes16 &s, bool inverse)
     {
-        const Bytes4 mix_matrix[4] = {
-            {2, 3, 1, 1},
-            {1, 2, 3, 1},
-            {1, 1, 2, 3},
-            {3, 1, 1, 2},
-        };
-        const Bytes4 mix_inv_matrix[4] = {
-            {0xE, 0xB, 0xD, 0x9},
-            {0x9, 0xE, 0xB, 0xD},
-            {0xD, 0x9, 0xE, 0xB},
-            {0xB, 0xD, 0x9, 0xE},
-        };
+        // import lookup tables
+        using namespace galois;
         Bytes16 output;
         for (int j = 0; j < 4; j++)
         {
-            Bytes4 col = get_col(s, j);
-            for (int i = 0; i < 4; i++)
+            Bytes4 a = {s[j], s[4 + j], s[8 + j], s[12 + j]};
+            if (!inverse)
             {
-                Bytes4 product = dot_product(
-                    (!inverse ? mix_matrix : mix_inv_matrix)[i], col);
-                uint8_t ac = std::reduce(product.cbegin(), product.cend(), '\0', std::bit_xor{});
-                output[i * 4 + j] = ac;
+                uint8_t temp = a[0] ^ a[1] ^ a[2] ^ a[3];
+                output[j] = a[0] ^ temp ^ x2[a[0] ^ a[1]];
+                output[j + 4] = a[1] ^ temp ^ x2[a[1] ^ a[2]];
+                output[j + 8] = a[2] ^ temp ^ x2[a[2] ^ a[3]];
+                output[j + 12] = a[3] ^ temp ^ x2[a[3] ^ a[0]];
+            }
+            else
+            {
+                output[j] = xE[a[0]] ^ x9[a[3]] ^ xD[a[2]] ^ xB[a[1]];
+                output[j + 4] = xE[a[1]] ^ x9[a[0]] ^ xD[a[3]] ^ xB[a[2]];
+                output[j + 8] = xE[a[2]] ^ x9[a[1]] ^ xD[a[0]] ^ xB[a[3]];
+                output[j + 12] = xE[a[3]] ^ x9[a[2]] ^ xD[a[1]] ^ xB[a[0]];
             }
         }
         return output;
