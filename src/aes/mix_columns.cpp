@@ -1,5 +1,5 @@
 #include "aes.h"
-#include "galois_lookup.h"
+#include "galois.h"
 
 #include <algorithm>
 #include <numeric>
