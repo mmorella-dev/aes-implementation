@@ -1,3 +1,6 @@
+#ifndef INIT_SBOX_H
+#define INIT_SBOX_H
+
 #include <array>
 #include <cstdint>
 
@@ -32,3 +35,5 @@ consteval std::array<uint8_t, 256> generate_sbox(bool inverse)
 
 constexpr auto SBOX = generate_sbox(false);
 constexpr auto SBOX_INVERSE = generate_sbox(true);
+
+#endif

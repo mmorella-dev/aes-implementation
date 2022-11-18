@@ -1,3 +1,6 @@
+#ifndef AES_H
+#define AES_H
+
 #include <array>
 #include <span>
 
@@ -13,12 +16,18 @@ using Bytes176 = std::array<Bytes16, 11>; // a 2d array of 11*16 (176)
 /// Process the
 
 /// @brief 
+    /// @brief
+/// @brief 
 /// @param input An array of 16 bytes
 /// @param inverse If true, use the inverse S-Box instead
+/// @return 
+    /// @return
 /// @return 
 Bytes16 sub_bytes(const Bytes16 &input, bool inverse);
 
 /// @brief Shifts row2 by 1, row3 by 2, and row4 by 4
+/// @param input A 4x4 matrix of bytes 
+    /// @param input A 4x4 matrix of bytes
 /// @param input A 4x4 matrix of bytes 
 /// @param left_right If true, shift left, else shift right
 /// @return The matrix, shifted
@@ -34,3 +43,5 @@ Bytes16 mix_columns(const Bytes16 &input, bool inverse);
 Bytes176 key_expansion(const Bytes16 &input);
 
 }
+
+#endif

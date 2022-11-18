@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <algorithm>
 
+#ifndef GALOIS_H
+#define GALOIS_H
 namespace galois
 {
     /// Calculates 
@@ -43,3 +45,5 @@ namespace galois
     /// For a given index i, xE[i] is 14 * i over GN(2^8)
     constexpr auto xE = generate_galois_lookup(14);
 }
+
+#endif
