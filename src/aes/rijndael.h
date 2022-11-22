@@ -1,11 +1,14 @@
-#ifndef RJINDAEL_H
-#define RJINDAEL_H
+#ifndef AES_RJINDAEL_H_
+#define AES_RJINDAEL_H_
 
 #include <array>
 #include <cstdint>
 
 #include "galois.h"
 
+namespace rjindael {
+
+/// @brief Performs a circular leftshift on an 8-bit value
 constexpr inline uint8_t rotl8(uint8_t x, uint8_t shift) {
   return ((uint8_t)((x) << (shift)) | ((x) >> (8 - (shift))));
 }
@@ -33,5 +36,7 @@ consteval std::array<uint8_t, 256> generate_sbox(bool inverse) {
 
 constexpr auto SBOX = generate_sbox(false);
 constexpr auto SBOX_INVERSE = generate_sbox(true);
+
+}
 
 #endif

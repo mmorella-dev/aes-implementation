@@ -2,8 +2,8 @@
 #include <cstdint>
 #include <algorithm>
 
-#ifndef GALOIS_H
-#define GALOIS_H
+#ifndef AES_GALOIS_H_
+#define AES_GALOIS_H_
 namespace galois
 {
     /// Calculates 
