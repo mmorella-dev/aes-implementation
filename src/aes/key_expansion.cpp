@@ -1,5 +1,5 @@
 #include "aes.h"
-#include "init_sbox.h"
+#include "rijndael.h"
 
 #include <algorithm>
 #include <array>
