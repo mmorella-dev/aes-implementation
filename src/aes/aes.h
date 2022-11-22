@@ -2,6 +2,7 @@
 #define AES_AES_H_
 
 #include <array>
+#include <cstdint>
 #include <span>
 
 namespace aes {
