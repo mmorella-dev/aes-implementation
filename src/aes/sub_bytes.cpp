@@ -11,7 +11,7 @@ namespace aes
         std::transform(input.begin(), input.end(), result.begin(), [=](uint8_t b)
                        {
         if (!inverse)
-            return SBOX[b];
+            return rjindael::SBOX[b];
         else
             return SBOX_INVERSE[b]; });
         return result;

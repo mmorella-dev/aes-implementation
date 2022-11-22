@@ -31,7 +31,7 @@ namespace aes
                 std::rotate(temp.begin(), temp.begin() + 1, temp.end());
                 // sub word
                 std::transform(temp.cbegin(), temp.cend(), temp.begin(), [](uint8_t b)
-                               { return SBOX[b]; });
+                               { return rjindael::SBOX[b]; });
                 // sub rcon
                 temp[0] ^= rc[i / 4];
             }
