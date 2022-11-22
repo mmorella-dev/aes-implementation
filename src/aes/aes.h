@@ -10,8 +10,11 @@ using Bytes4 = std::array<uint8_t, 4>;         // an array of 4 bytes
 using Bytes16 = std::array<uint8_t, 16>;       // an array of 16 bytes
 using Bytes176 = std::array<Bytes16, 11>; // a 2d array of 11*16 (176)
 
-/// If InputArray is not NULL, process all the values in input and store result
-/// If inverse is true it will use the Inverse S-Box to perform the substitution instead
+/// @brief Performs the AES SubBytes operation
+/// @param input An array of 16 bytes
+/// @param inverse If true, use the inverse S-Box
+/// @return The result of passing each byte through a Rjindael S-box
+Bytes16 sub_bytes(const Bytes16 &input, bool inverse = false);
 
 /// @brief Performs the AES ShiftRows operation
 /// @param input An array of 16 bytes
