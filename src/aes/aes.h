@@ -13,25 +13,11 @@ using Bytes176 = std::array<Bytes16, 11>; // a 2d array of 11*16 (176)
 /// If InputArray is not NULL, process all the values in input and store result
 /// If inverse is true it will use the Inverse S-Box to perform the substitution instead
 
-/// Process the
-
-/// @brief 
-    /// @brief
-/// @brief 
+/// @brief Performs the AES ShiftRows operation
 /// @param input An array of 16 bytes
-/// @param inverse If true, use the inverse S-Box instead
-/// @return 
-    /// @return
-/// @return 
-Bytes16 sub_bytes(const Bytes16 &input, bool inverse);
-
-/// @brief Shifts row2 by 1, row3 by 2, and row4 by 4
-/// @param input A 4x4 matrix of bytes 
-    /// @param input A 4x4 matrix of bytes
-/// @param input A 4x4 matrix of bytes 
-/// @param left_right If true, shift left, else shift right
+/// @param inverse If true, perform InvShiftRows
 /// @return The matrix, shifted
-Bytes16 shift_rows(const Bytes16 &input, bool left_right);
+Bytes16 shift_rows(const Bytes16 &input, bool inverse = false);
 
 // Accepts an input array of 16 bytes and produces an output according to the above M-Box function from Sec 6.3.
 // If inverse is TRUE it will calculate based on the Inverse Mix Columns Matrix
