@@ -1,7 +1,7 @@
 #ifndef AES_AES_H_
 #define AES_AES_H_
 
-#include <array> // for std::array
+#include <array>  // for std::array
 #include <cstdint>
 
 namespace aes {
