@@ -59,16 +59,16 @@ Bytes176 aes::key_expansion(const Bytes16 &key) {
     temp = w[i - 1];
     if (i % 4 == 0) {
       // rotate left by 1
-      std::rotate(temp.begin(), temp.begin() + 1, temp.end());
+      ranges::rotate(temp, temp.begin() + 1);
       // sub word
-      std::transform(temp.cbegin(), temp.cend(), temp.begin(),
-                     [](uint8_t b) { return rjindael::SBOX[b]; });
+      ranges::for_each(temp, [&](uint8_t &b) {
+        b = rjindael::SBOX[b];
+      });
       // sub rcon
       temp[0] ^= rc[i / 4];
     }
     // w[i] = w[i-1];
-    std::transform(w[i - 4].cbegin(), w[i - 4].cend(), temp.cbegin(),
-                   w[i].begin(), std::bit_xor{});
+    ranges::transform(w[i-4], temp, w[i].begin(), std::bit_xor{});
   }
   return std::bit_cast<Bytes176>(w);
 }
