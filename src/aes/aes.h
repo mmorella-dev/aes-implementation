@@ -33,8 +33,6 @@ Bytes16 mix_columns(const Bytes16 &input, bool inverse);
 /// @param key An array of 16 bytes
 /// @return An array of 11 keys for AES. 
 Bytes176 key_expansion(const Bytes16 &key);
-
-}
 }  // namespace aes
 
 #endif
