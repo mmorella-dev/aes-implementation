@@ -8,13 +8,20 @@
 
 namespace rjindael {
 
-/// @brief Performs a circular leftshift on an 8-bit value
-constexpr inline uint8_t rotl8(uint8_t x, uint8_t shift) {
-  return ((uint8_t)((x) << (shift)) | ((x) >> (8 - (shift))));
+using Bytes256 = std::array<uint8_t, 256>;
+
+/// @brief Performs a left rotation on an 8-bit value
+/// @param b the byte to use
+/// @param shift The number (0–8) of bits to rotate
+/// @return The byte b rotated by left by shift
+consteval inline uint8_t rotl8(uint8_t b, uint8_t shift) {
+  return (b << shift) | (b >> (8 - shift));
 }
 
-consteval std::array<uint8_t, 256> generate_sbox(bool inverse) {
-  std::array<uint8_t, 256> sbox;
+/// @brief Generates the rjindael S-box.
+/// @return {sbox, sbox_inverse}
+consteval std::pair<Bytes256, Bytes256> generate_sbox() {
+  Bytes256 sbox, sbox_inverse;
   uint8_t p = 1, q = 1;
   // loop invariant: p * q == 1 in the Galois field
   do {
@@ -23,20 +30,19 @@ consteval std::array<uint8_t, 256> generate_sbox(bool inverse) {
     // Affine transformation
     uint8_t affine =
         q ^ rotl8(q, 1) ^ rotl8(q, 2) ^ rotl8(q, 3) ^ rotl8(q, 4) ^ 0x63;
-    if (!inverse)
-      sbox[p] = affine;
-    else
-      sbox[affine] = p;
+    sbox[p] = affine;
+    sbox_inverse[affine] = p;
   } while (p != 1);
 
   /* 0 is a special case since it has no inverse */
   sbox[0] = 0x63;
-  return sbox;
+  sbox_inverse[0x63] = 0;
+  return {sbox, sbox_inverse};
 }
 
-constexpr auto SBOX = generate_sbox(false);
-constexpr auto SBOX_INVERSE = generate_sbox(true);
+constexpr auto SBOX = generate_sbox().first;
+constexpr auto SBOX_INVERSE = generate_sbox().second;
 
-}
+}  // namespace rjindael
 
 #endif
