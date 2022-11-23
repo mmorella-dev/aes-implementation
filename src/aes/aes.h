@@ -1,9 +1,8 @@
 #ifndef AES_AES_H_
 #define AES_AES_H_
 
-#include <array>
+#include <array> // for std::array
 #include <cstdint>
-#include <span>
 
 namespace aes {
 
