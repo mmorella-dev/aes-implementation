@@ -13,12 +13,14 @@ namespace ranges = std::ranges;
 
 void aes::sub_bytes(Bytes16 &input, bool inverse) {
   const auto &sbox = (!inverse) ? rjindael::SBOX : rjindael::SBOX_INVERSE;
-  ranges::for_each(input, [&](uint8_t &b) { b = sbox[b]; });
+  for (uint8_t &b: input) {
+    b = sbox[b];
+  }
 }
 
 void aes::shift_rows(Bytes16 &input, bool inverse) {
   for (int i = 0; i < 4; i++) {
-    auto row = input.begin() + 4*i;
+    auto row = input.begin() + 4 * i;
     auto middle = row + (!inverse ? i : 4 - i);
     std::rotate(row, middle, row + 4);
   }
@@ -50,25 +52,25 @@ const Bytes16 rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
 
 Bytes176 aes::key_expansion(const Bytes16 &key) {
   std::array<Bytes4, 44> w;
+  std::array<uint8_t, 176> w2;
   for (int i = 0; i < 4; i++) {
     // get row i
     w[i] = {key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]};
   }
-  Bytes4 temp;
   for (int i = 4; i < 44; i++) {
-    temp = w[i - 1];
+    Bytes4 temp = w[i - 1];
     if (i % 4 == 0) {
       // rotate left by 1
       ranges::rotate(temp, temp.begin() + 1);
       // sub word
-      ranges::for_each(temp, [&](uint8_t &b) {
+      for (uint8_t &b : temp) {
         b = rjindael::SBOX[b];
-      });
+      }
       // sub rcon
       temp[0] ^= rc[i / 4];
     }
-    // w[i] = w[i-1];
-    ranges::transform(w[i-4], temp, w[i].begin(), std::bit_xor{});
+    // w[i] = w[i-1] ^ temp;
+    ranges::transform(w[i - 4], temp, w[i].begin(), std::bit_xor{});
   }
   return std::bit_cast<Bytes176>(w);
 }
