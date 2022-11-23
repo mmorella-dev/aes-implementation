@@ -3,33 +3,32 @@
 #include <algorithm>
 #include <bit>      // for std::bit_cast
 #include <numeric>  // std::bit_xor
+#include <ranges>
 
 #include "galois.h"
 #include "rijndael.h"
 
 using namespace aes;
+namespace ranges = std::ranges;
 
 void aes::sub_bytes(Bytes16 &input, bool inverse) {
   const auto &sbox = (!inverse) ? rjindael::SBOX : rjindael::SBOX_INVERSE;
-  std::for_each(input.begin(), input.end(), [&](uint8_t &b) { b = sbox[b]; });
+  ranges::for_each(input, [&](uint8_t &b) { b = sbox[b]; });
 }
 
 void aes::shift_rows(Bytes16 &input, bool inverse) {
-  // row 2: rotate by 1 (or 3 if going right)
-  auto row2 = input.begin() + 4;
-  std::rotate(row2, row2 + (!inverse ? 1 : 3), row2 + 4);
-  // row 3: rotate by 2
-  auto row3 = row2 + 4;
-  std::rotate(row3, row3 + 2, row3 + 4);
-  // row 4: rotate by 3 (or 1 if going left)
-  auto row4 = row3 + 4;
-  std::rotate(row4, row4 + (!inverse ? 3 : 1), row4 + 4);
+  for (int i = 0; i < 4; i++) {
+    auto row = input.begin() + 4*i;
+    auto middle = row + (!inverse ? i : 4 - i);
+    std::rotate(row, middle, row + 4);
+  }
 }
 
 void aes::mix_columns(Bytes16 &s, bool inverse) {
   // import lookup tables
   using namespace galois;
   for (int j = 0; j < 4; j++) {
+    // get column vector
     Bytes4 a = {s[j], s[4 + j], s[8 + j], s[12 + j]};
     if (!inverse) {
       uint8_t temp = a[0] ^ a[1] ^ a[2] ^ a[3];
