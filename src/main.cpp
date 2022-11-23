@@ -26,10 +26,12 @@ bool test_sub_bytes() {
                             0x4A, 0xC3, 0x46, 0xE7,  //
                             0x8C, 0xD8, 0x95, 0xA6};
   // Call sub_bytes
-  Bytes16 result = sub_bytes(init);
+  Bytes16 result = init;
+  sub_bytes(result);
   assert(expected == result);
   // Call sub_bytes inverse
-  Bytes16 result2 = sub_bytes(expected, true);
+  Bytes16 result2 = expected;
+  sub_bytes(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;
@@ -44,7 +46,8 @@ bool test_shift_rows() {
       0x4A, 0xC3, 0x46, 0xE7,  //
       0x8C, 0xD8, 0x95, 0xA6   //
   };
-  const Bytes16 result = shift_rows(init);
+  Bytes16 result = init;
+  shift_rows(result);
   const Bytes16 expected = {
       0x87, 0xF2, 0x4D, 0x97,  //
       0x6E, 0x4C, 0x90, 0xEC,  //
@@ -65,7 +68,8 @@ bool test_mix_columns() {
       0x46, 0xE7, 0x4A, 0xC3,  //
       0xA6, 0x8C, 0xD8, 0x95   //
   };
-  Bytes16 result = mix_columns(init, false);
+  Bytes16 result = init;
+  mix_columns(result, false);
   const Bytes16 expected = {
       0x47, 0x40, 0xA3, 0x4C,  //
       0x37, 0xD4, 0x70, 0x9F,  //
@@ -74,7 +78,8 @@ bool test_mix_columns() {
   };
 
   assert(result == expected);
-  Bytes16 result2 = mix_columns(expected, true);
+  Bytes16 result2 = expected;
+  mix_columns(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;

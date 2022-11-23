@@ -13,24 +13,20 @@ using Bytes176 = std::array<Bytes16, 11>;  // a 2d array of 11*16 (176) bytes
 /// @brief Performs the AES SubBytes operation
 /// @param input An array of 16 bytes
 /// @param inverse If true, use the inverse S-Box
-/// @return The result of passing each byte through a Rjindael S-box
-Bytes16 sub_bytes(const Bytes16 &input, bool inverse = false);
+void sub_bytes(Bytes16 &input, bool inverse = false);
 
 /// @brief Performs the AES ShiftRows operation
 /// @param input An array of 16 bytes
 /// @param inverse If true, perform InvShiftRows
-/// @return The array, shifted
-Bytes16 shift_rows(const Bytes16 &input, bool inverse = false);
+void shift_rows(Bytes16 &input, bool inverse = false);
 
 /// @brief Performs the AES MixColumns operation
 /// @param input An array of 16 bytes
 /// @param inverse If true, perform InvMixColumns
-/// @return 
-Bytes16 mix_columns(const Bytes16 &input, bool inverse);
+void mix_columns(Bytes16 &input, bool inverse);
 
 /// @brief Performs the AES KeyExpansion operation
 /// @param key An array of 16 bytes
-/// @return An array of 11 keys for AES. 
 Bytes176 key_expansion(const Bytes16 &key);
 }  // namespace aes
 
