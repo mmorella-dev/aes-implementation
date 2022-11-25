@@ -9,7 +9,7 @@ namespace galois {
 /// @param a An 8 bit number to multiply
 /// @param b An 8 bit number to multiply
 /// @return the result of a*b in GF(2^8) mod (x^8 + x^4 + x^3 + x + 1)
-consteval uint8_t gn_mult(uint8_t a, uint8_t b) {
+constexpr auto gn_mult(uint8_t a, uint8_t b) -> uint8_t {
   uint8_t p = 0;
   for (int c = 0; c < 8; c++) {
     if ((b & 1) != 0) {
@@ -26,7 +26,7 @@ consteval uint8_t gn_mult(uint8_t a, uint8_t b) {
 }
 
 /// @brief
-consteval std::array<uint8_t, 256> generate_galois_lookup(const uint8_t n) {
+consteval auto generate_galois_lookup(const uint8_t n) -> std::array<uint8_t, 256> {
   std::array<uint8_t, 256> arr;
   for (int i = 0; i < 256; i++) {
     arr[i] = gn_mult(i, n);

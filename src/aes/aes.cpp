@@ -8,17 +8,16 @@
 #include "galois.h"
 #include "rijndael.h"
 
-using namespace aes;
 namespace ranges = std::ranges;
 
-void aes::sub_bytes(Bytes16 &input, bool inverse) {
+auto aes::sub_bytes(Bytes16 &input, bool inverse) -> void {
   const auto &sbox = (!inverse) ? rjindael::SBOX : rjindael::SBOX_INVERSE;
-  for (uint8_t &b: input) {
+  for (uint8_t &b : input) {
     b = sbox[b];
   }
 }
 
-void aes::shift_rows(Bytes16 &input, bool inverse) {
+auto aes::shift_rows(Bytes16 &input, bool inverse) -> void {
   for (int i = 0; i < 4; i++) {
     auto row = input.begin() + 4 * i;
     auto middle = row + (!inverse ? i : 4 - i);
@@ -26,7 +25,7 @@ void aes::shift_rows(Bytes16 &input, bool inverse) {
   }
 }
 
-void aes::mix_columns(Bytes16 &s, bool inverse) {
+auto aes::mix_columns(Bytes16 &s, bool inverse) -> void {
   // import lookup tables
   using namespace galois;
   for (int j = 0; j < 4; j++) {
@@ -47,12 +46,10 @@ void aes::mix_columns(Bytes16 &s, bool inverse) {
   }
 }
 
-const Bytes16 rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
-                    0x20, 0x40, 0x80, 0x1B, 0x36};
-
-Bytes176 aes::key_expansion(const Bytes16 &key) {
+auto aes::key_expansion(const Bytes16 &key) -> Bytes176 {
+  const Bytes16 rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
+                      0x20, 0x40, 0x80, 0x1B, 0x36};
   std::array<Bytes4, 44> w;
-  std::array<uint8_t, 176> w2;
   for (int i = 0; i < 4; i++) {
     // get row i
     w[i] = {key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]};

@@ -8,13 +8,13 @@
 
 using namespace aes;
 
-std::ostream &operator<<(std::ostream &os, const Bytes16 &first) {
+auto operator<<(std::ostream &os, const Bytes16 &first) -> std::ostream& {
   for (int i = 0; i < 16; i++)
     os << std::hex << std::setfill('0') << std::setw(2) << (int)first[i] << " ";
   return os;
 }
 
-bool test_sub_bytes() {
+auto test_sub_bytes() -> bool {
   std::cout << "Testing sub_bytes... ";
   // example from page 176;
   const Bytes16 init = {0xEA, 0x04, 0x65, 0x85,  //
@@ -37,7 +37,7 @@ bool test_sub_bytes() {
   return true;
 }
 
-bool test_shift_rows() {
+auto test_shift_rows() -> bool {
   std::cout << "Testing shift_rows... ";
   // example from page 179
   const Bytes16 init = {
@@ -59,7 +59,7 @@ bool test_shift_rows() {
   return true;
 }
 
-bool test_mix_columns() {
+auto test_mix_columns() -> bool {
   std::cout << "Testing mix_columns... ";
   // example from p. 181
   const Bytes16 init = {
@@ -85,7 +85,7 @@ bool test_mix_columns() {
   return true;
 }
 
-bool test_key_expansion() {
+auto test_key_expansion() -> bool {
   std::cout << "Testing key_expansion...";
   Bytes16 key = {0x0F, 0x15, 0x71, 0xC9, 0x47, 0xD9, 0xE8, 0x59,
                  0x0C, 0xB7, 0xAD, 0xD6, 0xAF, 0x7F, 0x67, 0x98};
@@ -108,7 +108,7 @@ bool test_key_expansion() {
   return true;
 }
 
-int main() {
+auto main() -> int {
   assert(test_sub_bytes());
   assert(test_shift_rows());
   assert(test_mix_columns());
