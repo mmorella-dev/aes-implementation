@@ -1,6 +1,7 @@
 /// MAIN.CPP
 ///
-/// @brief A simple test program for the aes.h header
+/// @brief A simple test program for the aes.h header.
+///        Uses test data from Stallings' "Cryptography" (2022) 8th ed.
 /// @author Mae B. Morella <https://github.com/morellam-dev>
 
 #include <cassert>
@@ -11,7 +12,7 @@
 #include "aes/galois.h"
 #include "aes/rijndael.h"
 
-using namespace aes;
+using aes::byte;
 
 auto operator<<(std::ostream &os, const std::span<byte> &sp) -> std::ostream& {
   for (const auto b : sp) {
@@ -33,11 +34,11 @@ auto test_sub_bytes() -> bool {
                             0x8C, 0xD8, 0x95, 0xA6};
   // Call sub_bytes
   std::array<byte, 16> result = init;
-  sub_bytes(result);
+  aes::sub_bytes(result);
   assert(expected == result);
   // Call sub_bytes inverse
   std::array<byte, 16> result2 = expected;
-  sub_bytes(result2, true);
+  aes::sub_bytes(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;
@@ -53,7 +54,7 @@ auto test_shift_rows() -> bool {
       0x8C, 0xD8, 0x95, 0xA6   //
   };
   std::array<byte, 16> result = init;
-  shift_rows(result);
+  aes::shift_rows(result);
   const std::array<byte, 16> expected = {
       0x87, 0xF2, 0x4D, 0x97,  //
       0x6E, 0x4C, 0x90, 0xEC,  //
@@ -75,17 +76,17 @@ auto test_mix_columns() -> bool {
       0xA6, 0x8C, 0xD8, 0x95   //
   };
   std::array<byte, 16> result = init;
-  mix_columns(result, false);
+  aes::mix_columns(result, false);
   const std::array<byte, 16> expected = {
       0x47, 0x40, 0xA3, 0x4C,  //
       0x37, 0xD4, 0x70, 0x9F,  //
       0x94, 0xE4, 0x3A, 0x42,  //
       0xED, 0xA5, 0xA6, 0xBC   //
   };
-
   assert(result == expected);
   std::array<byte, 16> result2 = expected;
-  mix_columns(result2, true);
+  // MixColumns inverse
+  aes::mix_columns(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;
@@ -98,7 +99,7 @@ auto test_key_expansion() -> bool {
   std::cerr << "Key: ";
   std::cerr << key << '\n';
 
-  auto result = key_expansion(key);
+  auto result = aes::key_expansion(key);
   for (int i = 1; i < 11; i++) {
     std::cerr << "Round " << i << ": ";
     std::cerr << result[i] << '\n';
