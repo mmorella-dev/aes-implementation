@@ -1,3 +1,8 @@
+/// AES.H
+///
+/// @brief Provides core AES encryption functions
+/// @author Mae B. Morella <https://github.com/morellam-dev>
+
 #ifndef AES_AES_H_
 #define AES_AES_H_
 

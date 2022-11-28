@@ -1,3 +1,9 @@
+/// GALOIS.H
+///
+/// @brief Provides common lookup tables for multiplication in
+////       GF(2^8) mod (x^8 + x^4 + x^3 + x + 1)
+/// @author Mae B. Morella <https://github.com/morellam-dev>
+
 #include <algorithm>
 #include <array>
 #include <cstdint>
@@ -5,17 +11,19 @@
 #ifndef AES_GALOIS_H_
 #define AES_GALOIS_H_
 namespace galois {
+
 /// @brief Performs multiplication in the AES Galois feld
 /// @param a An 8 bit number to multiply
 /// @param b An 8 bit number to multiply
 /// @return the result of a*b in GF(2^8) mod (x^8 + x^4 + x^3 + x + 1)
 constexpr auto gn_mult(uint8_t a, uint8_t b) -> uint8_t {
+  // algorithm derived from <https://en.wikipedia.org/wiki/Rijndael_MixColumns>
   uint8_t p = 0;
   for (int c = 0; c < 8; c++) {
     if ((b & 1) != 0) {
       p ^= a;
     }
-    bool hi = a & 0b1000'0000;
+    bool hi_bit_set = a & 0b1000'0000;
     a <<= 1;  // lshift by 1
     if (hi) {
       a ^= 0b0001'1011; /* x^4 + x^3 + x + 1 */
@@ -25,7 +33,7 @@ constexpr auto gn_mult(uint8_t a, uint8_t b) -> uint8_t {
   return p;
 }
 
-/// @brief
+/// @brief Computes the lookup table for a * n over GN(2^8)
 consteval auto generate_galois_lookup(const uint8_t n)
     -> std::array<uint8_t, 256> {
   std::array<uint8_t, 256> arr;

@@ -1,3 +1,8 @@
+/// RJINDAEL.H
+///
+/// @brief Computes the Rjindael AES S-Boxes at compile-time.
+/// @author Mae B. Morella <https://github.com/morellam-dev>
+
 #ifndef AES_RJINDAEL_H_
 #define AES_RJINDAEL_H_
 

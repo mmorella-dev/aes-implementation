@@ -1,3 +1,7 @@
+/// AES.CPP
+///
+/// @brief Implements aes.h
+
 #include "aes.h"
 
 #include <algorithm>

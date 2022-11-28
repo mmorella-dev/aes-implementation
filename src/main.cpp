@@ -1,3 +1,8 @@
+/// MAIN.CPP
+///
+/// @brief A simple test program for the aes.h header
+/// @author Mae B. Morella <https://github.com/morellam-dev>
+
 #include <cassert>
 #include <iomanip>  // std::setw
 #include <iostream>
