@@ -1,7 +1,7 @@
 /// GALOIS.H
 ///
 /// @brief Provides common lookup tables for multiplication in
-////       GF(2^8) mod (x^8 + x^4 + x^3 + x + 1)
+///        GF(2^8) mod (x^8 + x^4 + x^3 + x + 1)
 /// @author Mae B. Morella <https://github.com/morellam-dev>
 
 #include <algorithm>
@@ -20,13 +20,11 @@ constexpr auto gn_mult(uint8_t a, uint8_t b) -> uint8_t {
   // algorithm derived from <https://en.wikipedia.org/wiki/Rijndael_MixColumns>
   uint8_t p = 0;
   for (int c = 0; c < 8; c++) {
-    if ((b & 1) != 0) {
-      p ^= a;
-    }
-    bool hi_bit_set = a & 0b1000'0000;
+    p ^= -(b & 1) & a;
+    bool high_bit = a & (1 << 7);
     a <<= 1;  // lshift by 1
-    if (hi) {
-      a ^= 0b0001'1011; /* x^4 + x^3 + x + 1 */
+    if (high_bit) {
+      a ^= 0b1'1011; /* x^4 + x^3 + x + 1 */
     }
     b >>= 1;
   }
