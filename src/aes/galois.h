@@ -26,7 +26,8 @@ constexpr auto gn_mult(uint8_t a, uint8_t b) -> uint8_t {
 }
 
 /// @brief
-consteval auto generate_galois_lookup(const uint8_t n) -> std::array<uint8_t, 256> {
+consteval auto generate_galois_lookup(const uint8_t n)
+    -> std::array<uint8_t, 256> {
   std::array<uint8_t, 256> arr;
   for (int i = 0; i < 256; i++) {
     arr[i] = gn_mult(i, n);

@@ -8,15 +8,15 @@
 #include "galois.h"
 #include "aes.h" // for bytes_t
 
-using aes::bytes_t;
 
 namespace rjindael {
 
+using aes::byte;
 
 /// @brief Generates the rjindael S-box.
 /// @return {sbox, sbox_inverse}
-consteval std::pair<bytes_t<256>, bytes_t<256>> generate_sbox() {
-  bytes_t<256> sbox, sbox_inverse;
+consteval std::pair<std::array<byte, 256>, std::array<byte, 256>> generate_sbox() {
+  std::array<byte, 256> sbox, sbox_inverse;
   uint8_t p = 1, q = 1;
   // loop invariant: p * q == 1 in the Galois field
   do {
