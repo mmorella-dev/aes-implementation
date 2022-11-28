@@ -10,14 +10,14 @@
 
 namespace ranges = std::ranges;
 
-auto aes::sub_bytes(Bytes16 &input, bool inverse) -> void {
+auto aes::sub_bytes(bytes_t<16> &input, bool inverse) -> void {
   const auto &sbox = (!inverse) ? rjindael::SBOX : rjindael::SBOX_INVERSE;
   for (uint8_t &b : input) {
     b = sbox[b];
   }
 }
 
-auto aes::shift_rows(Bytes16 &input, bool inverse) -> void {
+auto aes::shift_rows(bytes_t<16> &input, bool inverse) -> void {
   for (int i = 0; i < 4; i++) {
     auto row = input.begin() + 4 * i;
     auto middle = row + (!inverse ? i : 4 - i);
@@ -25,12 +25,12 @@ auto aes::shift_rows(Bytes16 &input, bool inverse) -> void {
   }
 }
 
-auto aes::mix_columns(Bytes16 &s, bool inverse) -> void {
+auto aes::mix_columns(bytes_t<16> &s, bool inverse) -> void {
   // import lookup tables
   using namespace galois;
   for (int j = 0; j < 4; j++) {
     // get column vector
-    Bytes4 a = {s[j], s[4 + j], s[8 + j], s[12 + j]};
+    bytes_t<4> a = {s[j], s[4 + j], s[8 + j], s[12 + j]};
     if (!inverse) {
       uint8_t temp = a[0] ^ a[1] ^ a[2] ^ a[3];
       s[j] = a[0] ^ temp ^ x2[a[0] ^ a[1]];
@@ -46,16 +46,16 @@ auto aes::mix_columns(Bytes16 &s, bool inverse) -> void {
   }
 }
 
-auto aes::key_expansion(const Bytes16 &key) -> Bytes176 {
-  const Bytes16 rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
+auto aes::key_expansion(const bytes_t<16> &key) -> array<bytes_t<16>, 11> {
+  const bytes_t<16> rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
                       0x20, 0x40, 0x80, 0x1B, 0x36};
-  std::array<Bytes4, 44> w;
+  array<bytes_t<4>, 44> w;
   for (int i = 0; i < 4; i++) {
     // get row i
     w[i] = {key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]};
   }
   for (int i = 4; i < 44; i++) {
-    Bytes4 temp = w[i - 1];
+    bytes_t<4> temp = w[i - 1];
     if (i % 4 == 0) {
       // rotate left by 1
       ranges::rotate(temp, temp.begin() + 1);
@@ -69,5 +69,5 @@ auto aes::key_expansion(const Bytes16 &key) -> Bytes176 {
     // w[i] = w[i-1] ^ temp;
     ranges::transform(w[i - 4], temp, w[i].begin(), std::bit_xor{});
   }
-  return std::bit_cast<Bytes176>(w);
+  return std::bit_cast<array<bytes_t<16>, 11>>(w);
 }

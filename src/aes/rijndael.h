@@ -6,15 +6,17 @@
 #include <bit> // for std::rotl
 
 #include "galois.h"
+#include "aes.h" // for bytes_t
+
+using aes::bytes_t;
 
 namespace rjindael {
 
-using Bytes256 = std::array<uint8_t, 256>;
 
 /// @brief Generates the rjindael S-box.
 /// @return {sbox, sbox_inverse}
-consteval std::pair<Bytes256, Bytes256> generate_sbox() {
-  Bytes256 sbox, sbox_inverse;
+consteval std::pair<bytes_t<256>, bytes_t<256>> generate_sbox() {
+  bytes_t<256> sbox, sbox_inverse;
   uint8_t p = 1, q = 1;
   // loop invariant: p * q == 1 in the Galois field
   do {
