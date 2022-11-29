@@ -31,18 +31,31 @@ consteval auto GenerateSboxes() -> std::pair<sbox_type, sbox_type> {
     // Affine transformation
     uint8_t affine =
         q ^ std::rotl(q, 1) ^ std::rotl(q, 2) ^ std::rotl(q, 3) ^ std::rotl(q, 4) ^ 0x63;
-    sbox_fwd[p] = affine;
-    sbox_inverse[affine] = p;
+    sbox_fwd.at(p) = affine;
+    sbox_inverse.at(affine) = p;
   } while (p != 1);
 
   /* 0 is a special case since it has no inverse */
-  sbox_fwd[0] = 0x63;
-  sbox_inverse[0x63] = 0;
+  sbox_fwd.at(0) = 0x63;
+  sbox_inverse.at(0x63) = 0;
   return {sbox_fwd, sbox_inverse};
 }
 
 constexpr auto Sbox = GenerateSboxes().first;
 constexpr auto SboxInverse = GenerateSboxes().second;
+
+/// @brief Lookup a single byte in the Rijndael Sbox.
+///
+/// @param b The byte to lookup
+/// @param inverse If true, return the inverse substitution (default false)
+/// @return The corresponding byte to b in the Sbox
+inline auto SubByte(byte b, bool inverse = false) -> byte {
+  if (inverse) {
+    return SboxInverse.at(b);
+  } else {
+    return Sbox.at(b);
+  }
+}
 
 }  // namespace rjindael
 
