@@ -6,9 +6,9 @@
 #ifndef AES_AES_H_
 #define AES_AES_H_
 
-#include <span>  // for std::span
-#include <array> // for std::array
+#include <array>  // for std::array
 #include <cstdint>
+#include <span>  // for std::span
 
 namespace aes {
 
@@ -31,7 +31,8 @@ auto MixColumns(std::span<byte, 16> input, bool inverse) -> void;
 
 /// @brief Performs the AES KeyExpansion operation
 /// @param key An std::array of 16 bytes
-auto KeyExpansion(const std::span<byte, 16> key) -> std::array<std::array<byte, 16>, 11>;
+auto KeyExpansion(const std::span<byte, 16> key)
+    -> std::array<std::array<byte, 16>, 11>;
 }  // namespace aes
 
 #endif
