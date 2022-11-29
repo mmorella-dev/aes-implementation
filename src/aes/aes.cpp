@@ -49,29 +49,31 @@ auto aes::MixColumns(std::span<byte, 16> s, bool inverse) -> void {
   }
 }
 
+const std::array<aes::byte, 16> RconValues = {
+    0xFF, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36};
+
 auto aes::KeyExpansion(const std::span<byte, 16> key)
     -> std::array<std::array<byte, 16>, 11> {
-  const std::array<byte, 16> rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
-                                   0x20, 0x40, 0x80, 0x1B, 0x36};
   std::array<std::array<byte, 4>, 44> w;
-  for (int i = 0; i < 4; i++) {
-    // get row i
-    w[i] = {key[4 * i], key[4 * i + 1], key[4 * i + 2], key[4 * i + 3]};
-  }
-  for (int i = 4; i < 44; i++) {
-    std::array<byte, 4> temp = w[i - 1];
-    if (i % 4 == 0) {
-      // rotate left by 1
-      ranges::rotate(temp, temp.begin() + 1);
-      // sub word
-      for (uint8_t &b : temp) {
-        b = rijndael::SubByte(b);
-      }
-      // sub rcon
-      temp[0] ^= rc[i / 4];
+  for (int i = 0; i < 44; i++) {
+    if (i < 4) {
+      // Case 1: w[i] = k[i];
+      ranges::copy(key.subspan(4 * i, 4), w[i].begin());
+    } else if (i % 4 == 0) {
+      // Case 2: w[i] = w[i-4] ^ SubWord(RotWord(w[i-1])) ^ Rcon[i/4]
+      std::array<byte, 4> t = w[i - 1];
+      // Rotate left by 1
+      ranges::rotate(t, t.begin() + 1);
+      // Sub word
+      ranges::transform(t, t.begin(),
+                        [](byte b) { return rijndael::SubByte(b); });
+      // Sub rcon
+      t[0] ^= RconValues[i / 4];
+      ranges::transform(w[i - 4], t, w[i].begin(), std::bit_xor{});
+    } else {
+      // Case 3: w[i] = w[i-4] ^ w[i-1]
+      ranges::transform(w[i - 4], w[i - 1], w[i].begin(), std::bit_xor{});
     }
-    // w[i] = w[i-1] ^ temp;
-    ranges::transform(w[i - 4], temp, w[i].begin(), std::bit_xor{});
   }
   return std::bit_cast<std::array<std::array<byte, 16>, 11>>(w);
 }
