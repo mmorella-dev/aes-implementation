@@ -20,29 +20,29 @@ using aes::byte;
 using sbox_type = std::array<byte, 256>;
 
 /// @brief Generates the rijndael S-boxes
-/// @return {sbox, sbox_inverse}
-consteval auto generate_sbox() -> std::pair<sbox_type, sbox_type> {
+/// @return {sbox_fwd, sbox_inverse}
+consteval auto GenerateSboxes() -> std::pair<sbox_type, sbox_type> {
   // algorithm derived from <https://en.wikipedia.org/wiki/Rijndael_S-box>
-  sbox_type sbox, sbox_inverse;
+  sbox_type sbox_fwd, sbox_inverse;
   uint8_t p = 1, q = 1; // loop invariant: p * q ≣ 1 in GF(2^8)
   do {
-    p = galois::gn_mult(p, 3);     // multiply p by 3
-    q = galois::gn_mult(q, 0xf6);  // divide q by 3
+    p = galois::GaloisMultiply(p, 3);     // multiply p by 3
+    q = galois::GaloisMultiply(q, 0xf6);  // divide q by 3
     // Affine transformation
     uint8_t affine =
         q ^ std::rotl(q, 1) ^ std::rotl(q, 2) ^ std::rotl(q, 3) ^ std::rotl(q, 4) ^ 0x63;
-    sbox[p] = affine;
+    sbox_fwd[p] = affine;
     sbox_inverse[affine] = p;
   } while (p != 1);
 
   /* 0 is a special case since it has no inverse */
-  sbox[0] = 0x63;
+  sbox_fwd[0] = 0x63;
   sbox_inverse[0x63] = 0;
-  return {sbox, sbox_inverse};
+  return {sbox_fwd, sbox_inverse};
 }
 
-constexpr auto SBOX = generate_sbox().first;
-constexpr auto SBOX_INVERSE = generate_sbox().second;
+constexpr auto Sbox = GenerateSboxes().first;
+constexpr auto SboxInverse = GenerateSboxes().second;
 
 }  // namespace rjindael
 

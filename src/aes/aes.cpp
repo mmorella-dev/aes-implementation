@@ -14,14 +14,14 @@
 
 namespace ranges = std::ranges;
 
-auto aes::sub_bytes(std::span<byte, 16> input, bool inverse) -> void {
-  const auto &sbox = (!inverse) ? rjindael::SBOX : rjindael::SBOX_INVERSE;
+auto aes::SubBytes(std::span<byte, 16> input, bool inverse) -> void {
+  const auto &sbox = (!inverse) ? rjindael::Sbox : rjindael::SboxInverse;
   for (uint8_t &b : input) {
     b = sbox[b];
   }
 }
 
-auto aes::shift_rows(std::span<byte, 16> input, bool inverse) -> void {
+auto aes::ShiftRows(std::span<byte, 16> input, bool inverse) -> void {
   for (int i = 0; i < 4; i++) {
     auto row = input.begin() + 4 * i;
     auto middle = row + (!inverse ? i : 4 - i);
@@ -29,7 +29,7 @@ auto aes::shift_rows(std::span<byte, 16> input, bool inverse) -> void {
   }
 }
 
-auto aes::mix_columns(std::span<byte, 16> s, bool inverse) -> void {
+auto aes::MixColumns(std::span<byte, 16> s, bool inverse) -> void {
   // import lookup tables
   using namespace galois;
   for (int j = 0; j < 4; j++) {
@@ -50,9 +50,10 @@ auto aes::mix_columns(std::span<byte, 16> s, bool inverse) -> void {
   }
 }
 
-auto aes::key_expansion(const std::span<byte, 16> key) -> std::array<std::array<byte, 16>, 11> {
+auto aes::KeyExpansion(const std::span<byte, 16> key)
+    -> std::array<std::array<byte, 16>, 11> {
   const std::array<byte, 16> rc = {0xFF, 0x01, 0x02, 0x04, 0x08, 0x10,
-                      0x20, 0x40, 0x80, 0x1B, 0x36};
+                                   0x20, 0x40, 0x80, 0x1B, 0x36};
   std::array<std::array<byte, 4>, 44> w;
   for (int i = 0; i < 4; i++) {
     // get row i
@@ -65,7 +66,7 @@ auto aes::key_expansion(const std::span<byte, 16> key) -> std::array<std::array<
       ranges::rotate(temp, temp.begin() + 1);
       // sub word
       for (uint8_t &b : temp) {
-        b = rjindael::SBOX[b];
+        b = rjindael::Sbox[b];
       }
       // sub rcon
       temp[0] ^= rc[i / 4];

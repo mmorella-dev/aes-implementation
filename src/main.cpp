@@ -21,8 +21,8 @@ auto operator<<(std::ostream &os, const std::span<byte> &sp) -> std::ostream& {
   return os;
 }
 
-auto test_sub_bytes() -> bool {
-  std::cout << "Testing sub_bytes... ";
+auto TestSubBytes() -> bool {
+  std::cout << "Testing SubBytes... ";
   // example from page 176;
   const std::array<byte, 16> init = {0xEA, 0x04, 0x65, 0x85,  //
                         0x83, 0x45, 0x5D, 0x96,  //
@@ -32,20 +32,20 @@ auto test_sub_bytes() -> bool {
                             0xEC, 0x6E, 0x4C, 0x90,  //
                             0x4A, 0xC3, 0x46, 0xE7,  //
                             0x8C, 0xD8, 0x95, 0xA6};
-  // Call sub_bytes
+  // Call SubBytes
   std::array<byte, 16> result = init;
-  aes::sub_bytes(result);
+  aes::SubBytes(result);
   assert(expected == result);
-  // Call sub_bytes inverse
+  // Call SubBytes inverse
   std::array<byte, 16> result2 = expected;
-  aes::sub_bytes(result2, true);
+  aes::SubBytes(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;
 }
 
-auto test_shift_rows() -> bool {
-  std::cout << "Testing shift_rows... ";
+auto TestShiftRows() -> bool {
+  std::cout << "Testing ShiftRows... ";
   // example from page 179
   const std::array<byte, 16> init = {
       0x87, 0xF2, 0x4D, 0x97,  //
@@ -54,7 +54,7 @@ auto test_shift_rows() -> bool {
       0x8C, 0xD8, 0x95, 0xA6   //
   };
   std::array<byte, 16> result = init;
-  aes::shift_rows(result);
+  aes::ShiftRows(result);
   const std::array<byte, 16> expected = {
       0x87, 0xF2, 0x4D, 0x97,  //
       0x6E, 0x4C, 0x90, 0xEC,  //
@@ -66,8 +66,8 @@ auto test_shift_rows() -> bool {
   return true;
 }
 
-auto test_mix_columns() -> bool {
-  std::cout << "Testing mix_columns... ";
+auto TestMixColumns() -> bool {
+  std::cout << "Testing MixColumns... ";
   // example from p. 181
   const std::array<byte, 16> init = {
       0x87, 0xF2, 0x4D, 0x97,  //
@@ -76,7 +76,7 @@ auto test_mix_columns() -> bool {
       0xA6, 0x8C, 0xD8, 0x95   //
   };
   std::array<byte, 16> result = init;
-  aes::mix_columns(result, false);
+  aes::MixColumns(result, false);
   const std::array<byte, 16> expected = {
       0x47, 0x40, 0xA3, 0x4C,  //
       0x37, 0xD4, 0x70, 0x9F,  //
@@ -86,20 +86,20 @@ auto test_mix_columns() -> bool {
   assert(result == expected);
   std::array<byte, 16> result2 = expected;
   // MixColumns inverse
-  aes::mix_columns(result2, true);
+  aes::MixColumns(result2, true);
   assert(result2 == init);
   std::cout << "✅ passed.\n";
   return true;
 }
 
-auto test_key_expansion() -> bool {
-  std::cout << "Testing key_expansion...";
+auto TestKeyExpansion() -> bool {
+  std::cout << "Testing KeyExpansion...";
   std::array<byte, 16> key = {0x0F, 0x15, 0x71, 0xC9, 0x47, 0xD9, 0xE8, 0x59,
                  0x0C, 0xB7, 0xAD, 0xD6, 0xAF, 0x7F, 0x67, 0x98};
   std::cerr << "Key: ";
   std::cerr << key << '\n';
 
-  auto result = aes::key_expansion(key);
+  auto result = aes::KeyExpansion(key);
   for (int i = 1; i < 11; i++) {
     std::cerr << "Round " << i << ": ";
     std::cerr << result[i] << '\n';
@@ -116,9 +116,9 @@ auto test_key_expansion() -> bool {
 }
 
 auto main() -> int {
-  assert(test_sub_bytes());
-  assert(test_shift_rows());
-  assert(test_mix_columns());
-  assert(test_key_expansion());
+  assert(TestSubBytes());
+  assert(TestShiftRows());
+  assert(TestMixColumns());
+  assert(TestKeyExpansion());
   std::cout << "🚀 All tests passed!\n";
 }
