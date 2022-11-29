@@ -73,8 +73,14 @@ auto aes::KeyExpansion(const std::span<byte, 16> key)
       // words[i] = words[i-4] ^ t
       ranges::transform(words[i - 4], t, words[i].begin(), std::bit_xor{});
     } else {
-      ranges::transform(words[i - 4], words[i - 1], words[i].begin(), std::bit_xor{});
+      ranges::transform(words[i - 4], words[i - 1], words[i].begin(),
+                        std::bit_xor{});
     }
   }
   return std::bit_cast<std::array<std::array<byte, 16>, 11>>(words);
+}
+
+auto aes::AddRoundKey(std::span<byte, 16> state,
+                      const std::span<byte, 16> round_key) -> void {
+  ranges::transform(state, round_key, state.begin(), std::bit_xor{});
 }

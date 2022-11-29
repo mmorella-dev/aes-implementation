@@ -34,6 +34,12 @@ auto MixColumns(std::span<byte, 16> key, bool inverse) -> void;
 /// @return The initial key and 10 round keys
 auto KeyExpansion(const std::span<byte, 16> key)
     -> std::array<std::array<byte, 16>, 11>;
+
+/// @brief Performs the AES AddRoundKey operation
+/// @param state The current state vector
+/// @param round_key The round key to add.
+auto AddRoundKey(std::span<byte, 16> state, const std::span<byte, 16> round_key) -> void;
+
 }  // namespace aes
 
 #endif
