@@ -16,7 +16,7 @@ namespace ranges = std::ranges;
 
 auto aes::SubBytes(std::span<byte, 16> input, bool inverse) -> void {
   for (uint8_t &b : input) {
-    b = rjindael::SubByte(b, inverse);
+    b = rijndael::SubByte(b, inverse);
   }
 }
 
@@ -65,7 +65,7 @@ auto aes::KeyExpansion(const std::span<byte, 16> key)
       ranges::rotate(temp, temp.begin() + 1);
       // sub word
       for (uint8_t &b : temp) {
-        b = rjindael::SubByte(b);
+        b = rijndael::SubByte(b);
       }
       // sub rcon
       temp[0] ^= rc[i / 4];

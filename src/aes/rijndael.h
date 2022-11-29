@@ -1,10 +1,10 @@
 /// RJINDAEL.H
 ///
-/// @brief Computes the Rjindael AES S-Boxes at compile-time.
+/// @brief Computes the Rijndael AES S-Boxes at compile-time.
 /// @author Mae B. Morella <https://github.com/morellam-dev>
 
-#ifndef AES_RJINDAEL_H_
-#define AES_RJINDAEL_H_
+#ifndef AES_RIJNDAEL_H_
+#define AES_RIJNDAEL_H_
 
 #include <array>
 #include <cstdint>
@@ -14,7 +14,7 @@
 #include "aes.h" // for bytes_t
 
 
-namespace rjindael {
+namespace rijndael {
 
 using aes::byte;
 using sbox_type = std::array<byte, 256>;
@@ -57,6 +57,6 @@ inline auto SubByte(byte b, bool inverse = false) -> byte {
   }
 }
 
-}  // namespace rjindael
+}  // namespace rijndael
 
 #endif
