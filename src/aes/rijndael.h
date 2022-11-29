@@ -26,8 +26,8 @@ consteval auto GenerateSboxes() -> std::pair<sbox_type, sbox_type> {
   sbox_type sbox_fwd, sbox_inverse;
   uint8_t p = 1, q = 1; // loop invariant: p * q ≣ 1 in GF(2^8)
   do {
-    p = galois::GaloisMultiply(p, 3);     // multiply p by 3
-    q = galois::GaloisMultiply(q, 0xf6);  // divide q by 3
+    p = galois::Multiply(p, 3);     // multiply p by 3
+    q = galois::Multiply(q, 0xf6);  // divide q by 3
     // Affine transformation
     uint8_t affine =
         q ^ std::rotl(q, 1) ^ std::rotl(q, 2) ^ std::rotl(q, 3) ^ std::rotl(q, 4) ^ 0x63;
