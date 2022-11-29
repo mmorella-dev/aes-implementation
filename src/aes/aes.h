@@ -15,22 +15,23 @@ namespace aes {
 using byte = uint8_t;
 
 /// @brief Performs the AES SubBytes operation
-/// @param input A span of 16 contiuguous bytes
+/// @param key A span of 16 contiuguous bytes
 /// @param inverse If true, use the inverse S-Box
-auto SubBytes(std::span<byte, 16> input, bool inverse = false) -> void;
+auto SubBytes(std::span<byte, 16> key, bool inverse = false) -> void;
 
 /// @brief Performs the AES ShiftRows operation
-/// @param input A span of 16 contiuguous bytes
+/// @param key A span of 16 contiuguous bytes
 /// @param inverse If true, perform InvShiftRows
-auto ShiftRows(std::span<byte, 16> input, bool inverse = false) -> void;
+auto ShiftRows(std::span<byte, 16> key, bool inverse = false) -> void;
 
 /// @brief Performs the AES MixColumns operation
-/// @param input A span of 16 contiuguous bytes
+/// @param key A span of 16 contiuguous bytes
 /// @param inverse If true, perform InvMixColumns
-auto MixColumns(std::span<byte, 16> input, bool inverse) -> void;
+auto MixColumns(std::span<byte, 16> key, bool inverse) -> void;
 
 /// @brief Performs the AES KeyExpansion operation
 /// @param key An std::array of 16 bytes
+/// @return The initial key and 10 round keys
 auto KeyExpansion(const std::span<byte, 16> key)
     -> std::array<std::array<byte, 16>, 11>;
 }  // namespace aes
