@@ -15,17 +15,17 @@ namespace aes {
 using byte = uint8_t;
 
 /// @brief Performs the AES SubBytes operation
-/// @param state A span of 16 contiuguous bytes
+/// @param state A span of 16 contiguous bytes (modified in place)
 /// @param inverse If true, use the inverse S-Box
 auto SubBytes(std::span<byte, 16> state, bool inverse = false) -> void;
 
 /// @brief Performs the AES ShiftRows operation
-/// @param state A span of 16 contiuguous bytes
+/// @param state A span of 16 contiguous bytes (modified in place)
 /// @param inverse If true, perform InvShiftRows
 auto ShiftRows(std::span<byte, 16> state, bool inverse = false) -> void;
 
 /// @brief Performs the AES MixColumns operation
-/// @param state A span of 16 contiuguous bytes
+/// @param state A span of 16 contiguous bytes (modified in place)
 /// @param inverse If true, perform InvMixColumns
 auto MixColumns(std::span<byte, 16> state, bool inverse = false) -> void;
 
