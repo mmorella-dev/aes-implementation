@@ -21,10 +21,15 @@ auto aes::SubBytes(std::span<byte, 16> key, bool inverse) -> void {
 }
 
 auto aes::ShiftRows(std::span<byte, 16> key, bool inverse) -> void {
-  for (int i = 0; i < 4; i++) {
-    auto row = key.begin() + 4 * i;
-    auto middle = row + (!inverse ? i : 4 - i);
-    std::rotate(row, middle, row + 4);
+  for (int i = 1; i < 4; i++) {
+    std::array<byte, 4> row = {
+      key[0 + i], key[4 + i], key[8 + i], key[12 + i]
+    };
+    auto middle = row.begin() + (!inverse ? i : 4 - i);
+    std::ranges::rotate(row, middle);
+    for (int j = 0; j < 4; j++) {
+      key[j*4 + i] = row[j];
+    }
   }
 }
 
