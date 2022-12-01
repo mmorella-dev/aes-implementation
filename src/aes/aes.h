@@ -27,7 +27,7 @@ auto ShiftRows(std::span<byte, 16> key, bool inverse = false) -> void;
 /// @brief Performs the AES MixColumns operation
 /// @param key A span of 16 contiuguous bytes
 /// @param inverse If true, perform InvMixColumns
-auto MixColumns(std::span<byte, 16> key, bool inverse) -> void;
+auto MixColumns(std::span<byte, 16> key, bool inverse = false) -> void;
 
 /// @brief Performs the AES KeyExpansion operation
 /// @param key An std::array of 16 bytes
