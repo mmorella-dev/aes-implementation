@@ -14,29 +14,29 @@
 
 namespace ranges = std::ranges;
 
-auto aes::SubBytes(std::span<byte, 16> key, bool inverse) -> void {
-  for (uint8_t &b : key) {
+auto aes::SubBytes(std::span<byte, 16> state, bool inverse) -> void {
+  for (uint8_t &b : state) {
     b = rijndael::SubByte(b, inverse);
   }
 }
 
-auto aes::ShiftRows(std::span<byte, 16> key, bool inverse) -> void {
+auto aes::ShiftRows(std::span<byte, 16> state, bool inverse) -> void {
   for (int i = 1; i < 4; i++) {
-    std::array<byte, 4> row = {key[0 + i], key[4 + i], key[8 + i], key[12 + i]};
+    std::array<byte, 4> row = {state[0 + i], state[4 + i], state[8 + i], state[12 + i]};
     auto middle = row.begin() + (!inverse ? i : 4 - i);
     std::ranges::rotate(row, middle);
     for (int j = 0; j < 4; j++) {
-      key[j * 4 + i] = row[j];
+      state[j * 4 + i] = row[j];
     }
   }
 }
 
-auto aes::MixColumns(std::span<byte, 16> key, bool inverse) -> void {
+auto aes::MixColumns(std::span<byte, 16> state, bool inverse) -> void {
   // import lookup tables
   using namespace galois;
   for (int c = 0; c < 4; c++) {
     // get column vector
-    auto col = key.subspan(4 * c, 4);
+    auto col = state.subspan(4 * c, 4);
     std::array<byte, 4> a;
     ranges::copy(col, a.begin());
     if (!inverse) {
@@ -57,7 +57,7 @@ auto aes::MixColumns(std::span<byte, 16> key, bool inverse) -> void {
 const std::array<aes::byte, 16> RconValues = {
     0xFF, 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36};
 
-auto aes::KeyExpansion(const std::span<byte, 16> key)
+auto aes::KeyExpansion(const std::span<byte, 16> state)
     -> std::array<std::array<byte, 16>, 11> {
   std::array<std::array<byte, 4>, 44> words;
   // Case 1: words[i] = k[i];
@@ -65,7 +65,7 @@ auto aes::KeyExpansion(const std::span<byte, 16> key)
   // Case 3: words[i] = words[i-4] ^ words[i-1]
   for (int i = 0; i < 44; i++) {
     if (i < 4) {
-      ranges::copy(key.subspan(4 * i, 4), words[i].begin());
+      ranges::copy(state.subspan(4 * i, 4), words[i].begin());
     } else if (i % 4 == 0) {
       std::array<byte, 4> t = words[i - 1];
       // Rotate left by 1
