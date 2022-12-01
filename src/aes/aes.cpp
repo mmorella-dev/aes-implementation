@@ -36,20 +36,22 @@ auto aes::ShiftRows(std::span<byte, 16> key, bool inverse) -> void {
 auto aes::MixColumns(std::span<byte, 16> key, bool inverse) -> void {
   // import lookup tables
   using namespace galois;
-  for (int j = 0; j < 4; j++) {
+  for (int c = 0; c < 4; c++) {
     // get column vector
-    const std::array<byte, 4> a = {key[j], key[4 + j], key[8 + j], key[12 + j]};
+    auto col = key.subspan(4*c, 4);
+    std::array<byte, 4> a;
+    ranges::copy(col, a.begin());
     if (!inverse) {
-      uint8_t temp = a[0] ^ a[1] ^ a[2] ^ a[3];
-      key[j] = a[0] ^ temp ^ x2[a[0] ^ a[1]];
-      key[j + 4] = a[1] ^ temp ^ x2[a[1] ^ a[2]];
-      key[j + 8] = a[2] ^ temp ^ x2[a[2] ^ a[3]];
-      key[j + 12] = a[3] ^ temp ^ x2[a[3] ^ a[0]];
+      byte temp = a[0] ^ a[1] ^ a[2] ^ a[3];
+      col[0] = a[0] ^ temp ^ x2[a[0] ^ a[1]];
+      col[1] = a[1] ^ temp ^ x2[a[1] ^ a[2]];
+      col[2] = a[2] ^ temp ^ x2[a[2] ^ a[3]];
+      col[3] = a[3] ^ temp ^ x2[a[3] ^ a[0]];
     } else {
-      key[j] = xE[a[0]] ^ x9[a[3]] ^ xD[a[2]] ^ xB[a[1]];
-      key[j + 4] = xE[a[1]] ^ x9[a[0]] ^ xD[a[3]] ^ xB[a[2]];
-      key[j + 8] = xE[a[2]] ^ x9[a[1]] ^ xD[a[0]] ^ xB[a[3]];
-      key[j + 12] = xE[a[3]] ^ x9[a[2]] ^ xD[a[1]] ^ xB[a[0]];
+      col[0] = xE[a[0]] ^ x9[a[3]] ^ xD[a[2]] ^ xB[a[1]];
+      col[1] = xE[a[1]] ^ x9[a[0]] ^ xD[a[3]] ^ xB[a[2]];
+      col[2] = xE[a[2]] ^ x9[a[1]] ^ xD[a[0]] ^ xB[a[3]];
+      col[3] = xE[a[3]] ^ x9[a[2]] ^ xD[a[1]] ^ xB[a[0]];
     }
   }
 }
