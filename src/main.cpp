@@ -99,14 +99,14 @@ auto TestKeyExpansion() -> bool {
   std::cout << "Testing KeyExpansion...";
   std::array<byte, 16> key = {0x0F, 0x15, 0x71, 0xC9, 0x47, 0xD9, 0xE8, 0x59,
                               0x0C, 0xB7, 0xAD, 0xD6, 0xAF, 0x7F, 0x67, 0x98};
-  std::cerr << "Key: ";
-  std::cerr << key << '\n';
+  // std::cerr << "Key: ";
+  // std::cerr << key << '\n';
 
   auto result = aes::KeyExpansion(key);
-  for (int i = 1; i < 11; i++) {
-    std::cerr << "Round " << i << ": ";
-    std::cerr << result[i] << '\n';
-  }
+  // for (int i = 1; i < 11; i++) {
+  //   std::cerr << "Round " << i << ": ";
+  //   std::cerr << result[i] << '\n';
+  // }
   // sample data from p. 189
   std::array<byte, 16> round1 = {0xDC, 0x90, 0x37, 0xB0, 0x9B, 0x49,
                                  0xDF, 0xE9, 0x97, 0xFE, 0x72, 0x3F,
@@ -120,10 +120,43 @@ auto TestKeyExpansion() -> bool {
   return true;
 }
 
+auto TestEncrypt() -> bool {
+  std::cout << "Testing Encrypt...";
+  std::array<byte, 16> plain = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+                                0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10};
+  std::array<byte, 16> key = {0x0F, 0x15, 0x71, 0xC9, 0x47, 0xD9, 0xE8, 0x59,
+                              0x0C, 0xB7, 0xAD, 0xD6, 0xAF, 0x7F, 0x67, 0x98};
+  std::array<byte, 16> cip = {0xFF, 0x0B, 0x84, 0x4A, 0x08, 0x53, 0xBF, 0x7C,
+                              0x69, 0x34, 0xAB, 0x43, 0x64, 0x14, 0x8F, 0xB9};
+  auto state = plain;
+  aes::Encrypt(state, key);
+  // std::cout << state;
+  assert(state == cip);
+  std::cout << "✅ passed.\n";
+  return true;
+}
+auto TestDecrypt() -> bool {
+  std::cout << "Testing Decrypt...";
+  std::array<byte, 16> cip = {0xFF, 0x0B, 0x84, 0x4A, 0x08, 0x53, 0xBF, 0x7C,
+                              0x69, 0x34, 0xAB, 0x43, 0x64, 0x14, 0x8F, 0xB9};
+  std::array<byte, 16> key = {0x0F, 0x15, 0x71, 0xC9, 0x47, 0xD9, 0xE8, 0x59,
+                              0x0C, 0xB7, 0xAD, 0xD6, 0xAF, 0x7F, 0x67, 0x98};
+  std::array<byte, 16> plain = {0x01, 0x23, 0x45, 0x67, 0x89, 0xAB, 0xCD, 0xEF,
+                                0xFE, 0xDC, 0xBA, 0x98, 0x76, 0x54, 0x32, 0x10};
+  auto state = cip;
+  aes::Decrypt(state, key);
+  // std::cout << state;
+  assert(state == plain);
+  std::cout << "✅ passed.\n";
+  return true;
+}
+
 auto main() -> int {
   assert(TestSubBytes());
   assert(TestShiftRows());
   assert(TestMixColumns());
   assert(TestKeyExpansion());
+  assert(TestEncrypt());
+  assert(TestDecrypt());
   std::cout << "🚀 All tests passed!\n";
 }

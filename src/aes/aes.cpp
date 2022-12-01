@@ -22,13 +22,11 @@ auto aes::SubBytes(std::span<byte, 16> key, bool inverse) -> void {
 
 auto aes::ShiftRows(std::span<byte, 16> key, bool inverse) -> void {
   for (int i = 1; i < 4; i++) {
-    std::array<byte, 4> row = {
-      key[0 + i], key[4 + i], key[8 + i], key[12 + i]
-    };
+    std::array<byte, 4> row = {key[0 + i], key[4 + i], key[8 + i], key[12 + i]};
     auto middle = row.begin() + (!inverse ? i : 4 - i);
     std::ranges::rotate(row, middle);
     for (int j = 0; j < 4; j++) {
-      key[j*4 + i] = row[j];
+      key[j * 4 + i] = row[j];
     }
   }
 }
@@ -38,7 +36,7 @@ auto aes::MixColumns(std::span<byte, 16> key, bool inverse) -> void {
   using namespace galois;
   for (int c = 0; c < 4; c++) {
     // get column vector
-    auto col = key.subspan(4*c, 4);
+    auto col = key.subspan(4 * c, 4);
     std::array<byte, 4> a;
     ranges::copy(col, a.begin());
     if (!inverse) {
@@ -90,4 +88,35 @@ auto aes::KeyExpansion(const std::span<byte, 16> key)
 auto aes::AddRoundKey(std::span<byte, 16> state,
                       const std::span<byte, 16> round_key) -> void {
   ranges::transform(state, round_key, state.begin(), std::bit_xor{});
+}
+
+auto aes::Encrypt(std::span<byte, 16> state,
+                  const std::span<byte, 16> initial_key) -> void {
+  auto round_keys = KeyExpansion(initial_key);
+  for (int i = 0; i < 11; i++) {
+    if (i != 0) {
+      SubBytes(state);
+      ShiftRows(state);
+      if (i != 10) {
+        MixColumns(state);
+      }
+    }
+    AddRoundKey(state, round_keys[i]);
+  }
+}
+
+auto aes::Decrypt(std::span<byte, 16> state,
+                  const std::span<byte, 16> initial_key) -> void {
+  auto round_keys = KeyExpansion(initial_key);
+  for (int i = 0; i < 11; i++) {
+    if (i != 0) {
+      SubBytes(state, true);
+      ShiftRows(state, true);
+      if (i != 10) {
+        MixColumns(state, true);
+        MixColumns(round_keys[10 - i], true);  // inverse-mix round key
+      }
+    }
+    AddRoundKey(state, round_keys[10 - i]);
+  }
 }

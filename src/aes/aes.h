@@ -40,6 +40,16 @@ auto KeyExpansion(const std::span<byte, 16> key)
 /// @param round_key The round key to add.
 auto AddRoundKey(std::span<byte, 16> state, const std::span<byte, 16> round_key) -> void;
 
+/// @brief Encrypts a 128-bit block using AES
+/// @param state The state vector to encrypt
+/// @param initial_key The key to use
+auto Encrypt(std::span<byte, 16> state, const std::span<byte, 16> initial_key) -> void;
+/// 
+/// @brief Decrypts a 128-bit block using AES
+/// @param state The state vector to decrypt
+/// @param initial_key The key to use
+auto Decrypt(std::span<byte, 16> state, const std::span<byte, 16> initial_key) -> void;
+
 }  // namespace aes
 
 #endif
