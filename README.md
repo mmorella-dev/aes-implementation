@@ -1,6 +1,6 @@
 # morellam-dev / cs-3626-special-project-aes
 
-An partial implementation of the [Advanced Encryption Standard](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) (AES). Created as a project for CS 3626 - Cryptography.
+C++ implementation of [AES](https://en.wikipedia.org/wiki/Advanced_Encryption_Standard) block encryption. Created for CS 3626 Cryptography.
 
 ## Building
 
